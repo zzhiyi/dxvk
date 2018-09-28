@@ -146,6 +146,9 @@ namespace dxvk {
       m_flags.set(
         DxvkContextFlag::CpDirtyResources,
         DxvkContextFlag::GpDirtyResources);
+      
+      if (imageView != nullptr && imageView->needsLayoutTransition())
+        this->changeImageLayout(imageView->image(), imageView->info().layout);
     }
   }
   
@@ -215,6 +218,29 @@ namespace dxvk {
   }
   
   
+  void DxvkContext::changeImageLayout(
+    const Rc<DxvkImage>&        image,
+          VkImageLayout         newLayout) {
+    this->spillRenderPass();
+
+    VkImageSubresourceRange subresourceRange = {
+      image->formatInfo()->aspectMask,
+      0, image->info().mipLevels,
+      0, image->info().numLayers };
+
+    m_barriers.accessImage(
+      image, subresourceRange,
+      image->info().layout,
+      image->info().stages,
+      image->info().access,
+      newLayout,
+      image->info().stages,
+      image->info().access);
+    
+    image->changeLayout(newLayout);
+  }
+
+
   void DxvkContext::clearBuffer(
     const Rc<DxvkBuffer>&       buffer,
           VkDeviceSize          offset,

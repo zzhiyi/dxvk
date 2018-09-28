@@ -89,6 +89,9 @@ namespace dxvk {
       VK_COMPONENT_SWIZZLE_IDENTITY,
       VK_COMPONENT_SWIZZLE_IDENTITY,
     };
+    
+    /// Layout to change the image to when using this view
+    VkImageLayout layout = VK_IMAGE_LAYOUT_UNDEFINED;
   };
   
   
@@ -224,6 +227,14 @@ namespace dxvk {
     VkImageLayout pickLayout(VkImageLayout layout) const {
       return m_info.layout == VK_IMAGE_LAYOUT_GENERAL
         ? VK_IMAGE_LAYOUT_GENERAL : layout;
+    }
+
+    /**
+     * \brief Changes default image layout
+     * \param [in] newLayout New layout
+     */
+    void changeLayout(VkImageLayout layout) {
+      m_info.layout = layout;
     }
 
     /**
@@ -390,6 +401,19 @@ namespace dxvk {
      */
     VkImageLayout pickLayout(VkImageLayout layout) const {
       return m_image->pickLayout(layout);
+    }
+
+    /**
+     * \brief Checks whether a layout transition is required
+     * 
+     * The underlying image may need to be transitioned to a
+     * different layout before this view is used in order to
+     * enable certain capabilities (e.g. stencil sampling).
+     * \returns \c true if a layout transition is needed
+     */
+    bool needsLayoutTransition() const {
+      return m_info.layout != VK_IMAGE_LAYOUT_UNDEFINED
+          && m_info.layout != m_image->info().layout;
     }
 
   private:

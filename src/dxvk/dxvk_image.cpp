@@ -122,7 +122,6 @@ namespace dxvk {
     const Rc<DxvkImage>&            image,
     const DxvkImageViewCreateInfo&  info)
   : m_vkd(vkd), m_image(image), m_info(info) {
-    // Since applications tend to bind views 
     for (uint32_t i = 0; i < ViewCount; i++)
       m_views[i] = VK_NULL_HANDLE;
     
@@ -162,6 +161,10 @@ namespace dxvk {
       default:
         throw DxvkError(str::format("DxvkImageView: Invalid view type: ", info.type));
     }
+
+    // Make sure that we don't do any bogus layout transitions
+    if (m_info.layout != VK_IMAGE_LAYOUT_UNDEFINED)
+      m_info.layout = m_image->pickLayout(m_info.layout);
   }
   
   

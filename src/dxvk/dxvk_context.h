@@ -164,6 +164,19 @@ namespace dxvk {
             uint32_t              stride);
     
     /**
+     * \brief Changes the layout of an image
+     * 
+     * Queues up a layout transition and stores
+     * that the image should be used with this
+     * layout by default in subsequent commands.
+     * \param [in] image The image to transition
+     * \param [in] newLayout new image layout
+     */
+    void changeImageLayout(
+      const Rc<DxvkImage>&        image,
+            VkImageLayout         newLayout);
+    
+    /**
      * \brief Clears a buffer with a fixed value
      * 
      * Note that both \c offset and \c length must
@@ -694,7 +707,7 @@ namespace dxvk {
     std::array<DxvkShaderResourceSlot, MaxNumResourceSlots>  m_rc;
     std::array<DxvkDescriptorInfo,     MaxNumActiveBindings> m_descInfos;
     std::array<uint32_t,               MaxNumActiveBindings> m_descOffsets;
-    
+
     void clearImageViewFb(
       const Rc<DxvkImageView>&    imageView,
             VkOffset3D            offset,
