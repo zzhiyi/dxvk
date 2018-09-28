@@ -75,6 +75,7 @@ namespace dxvk {
         viewInfo.swizzle = VkComponentMapping {
           VK_COMPONENT_SWIZZLE_ZERO, VK_COMPONENT_SWIZZLE_R,
           VK_COMPONENT_SWIZZLE_ZERO, VK_COMPONENT_SWIZZLE_ZERO };
+        viewInfo.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
       }
       
       switch (pDesc->ViewDimension) {
