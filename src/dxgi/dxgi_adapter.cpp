@@ -36,6 +36,7 @@ namespace dxvk {
      || riid == __uuidof(IDXGIAdapter)
      || riid == __uuidof(IDXGIAdapter1)
      || riid == __uuidof(IDXGIAdapter2)
+     || riid == __uuidof(IDXGIAdapter3)
      || riid == __uuidof(IDXGIVkAdapter)) {
       *ppvObject = ref(this);
       return S_OK;
@@ -208,6 +209,72 @@ namespace dxvk {
   }
   
   
+  HRESULT STDMETHODCALLTYPE DxgiAdapter::QueryVideoMemoryInfo(
+          UINT                          NodeIndex,
+          DXGI_MEMORY_SEGMENT_GROUP     MemorySegmentGroup,
+          DXGI_QUERY_VIDEO_MEMORY_INFO* pVideoMemoryInfo) {
+    if (NodeIndex > 0 || !pVideoMemoryInfo)
+      return DXGI_ERROR_INVALID_CALL;
+    
+    DxvkAdapterMemoryInfo memInfo = m_adapter->getMemoryHeapInfo();
+
+    VkMemoryHeapFlags heapFlagMask = VK_MEMORY_HEAP_DEVICE_LOCAL_BIT;
+    VkMemoryHeapFlags heapFlags    = 0;
+
+    if (MemorySegmentGroup == DXGI_MEMORY_SEGMENT_GROUP_LOCAL)
+      heapFlags |= VK_MEMORY_HEAP_DEVICE_LOCAL_BIT;
+
+    for (uint32_t i = 0; i < memInfo.heapCount; i++) {
+      if ((memInfo.heaps[i].heapFlags & heapFlagMask) != heapFlags)
+        continue;
+      
+      pVideoMemoryInfo->Budget       += memInfo.heaps[i].memoryAvailable;
+      pVideoMemoryInfo->CurrentUsage += memInfo.heaps[i].memoryAllocated;
+      pVideoMemoryInfo->AvailableForReservation = 0;
+      pVideoMemoryInfo->CurrentReservation      = 0;
+    }
+
+    return S_OK;
+  }
+
+
+  HRESULT STDMETHODCALLTYPE DxgiAdapter::SetVideoMemoryReservation(
+          UINT                          NodeIndex,
+          DXGI_MEMORY_SEGMENT_GROUP     MemorySegmentGroup,
+          UINT64                        Reservation) {
+    Logger::err("DxgiAdapter::SetVideoMemoryReservation: Not implemented");
+    return E_NOTIMPL;
+  }
+
+  
+  HRESULT STDMETHODCALLTYPE DxgiAdapter::RegisterHardwareContentProtectionTeardownStatusEvent(
+          HANDLE                        hEvent,
+          DWORD*                        pdwCookie) {
+    Logger::err("DxgiAdapter::RegisterHardwareContentProtectionTeardownStatusEvent: Not implemented");
+    return E_NOTIMPL;
+  }
+
+
+  HRESULT STDMETHODCALLTYPE DxgiAdapter::RegisterVideoMemoryBudgetChangeNotificationEvent(
+          HANDLE                        hEvent,
+          DWORD*                        pdwCookie) {
+    Logger::err("DxgiAdapter::RegisterVideoMemoryBudgetChangeNotificationEvent: Not implemented");
+    return E_NOTIMPL;
+  }
+  
+
+  void STDMETHODCALLTYPE DxgiAdapter::UnregisterHardwareContentProtectionTeardownStatus(
+          DWORD                         dwCookie) {
+    Logger::err("DxgiAdapter::UnregisterHardwareContentProtectionTeardownStatus: Not implemented");
+  }
+
+
+  void STDMETHODCALLTYPE DxgiAdapter::UnregisterVideoMemoryBudgetChangeNotification(
+          DWORD                         dwCookie) {
+    Logger::err("DxgiAdapter::UnregisterVideoMemoryBudgetChangeNotification: Not implemented");
+  }
+
+
   Rc<DxvkAdapter> STDMETHODCALLTYPE DxgiAdapter::GetDXVKAdapter() {
     return m_adapter;
   }
