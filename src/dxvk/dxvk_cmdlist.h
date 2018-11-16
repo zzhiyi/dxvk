@@ -6,6 +6,7 @@
 #include "dxvk_buffer.h"
 #include "dxvk_descriptor.h"
 #include "dxvk_event.h"
+#include "dxvk_gpu_event.h"
 #include "dxvk_lifetime.h"
 #include "dxvk_limits.h"
 #include "dxvk_pipelayout.h"
@@ -155,6 +156,17 @@ namespace dxvk {
      */
     void trackEvent(const DxvkEventRevision& event) {
       m_eventTracker.trackEvent(event);
+    }
+
+    /**
+     * \brief Tracks a GPU event
+     * 
+     * The event will be returned to its event pool
+     * after the command buffer has finished executing.
+     * \param [in] handle Event handle
+     */
+    void trackGpuEvent(DxvkGpuEventHandle handle) {
+      m_gpuEventTracker.trackEvent(handle);
     }
     
     /**
@@ -591,6 +603,13 @@ namespace dxvk {
         depthBiasSlopeFactor);
     }
 
+
+    void cmdSetEvent(
+            VkEvent                 event,
+            VkPipelineStageFlags    stages) {
+      m_vkd->vkCmdSetEvent(m_execBuffer, event, stages);
+    }
+
     
     void cmdSetScissor(
             uint32_t                firstScissor,
@@ -660,6 +679,7 @@ namespace dxvk {
     DxvkStagingAlloc    m_stagingAlloc;
     DxvkQueryTracker    m_queryTracker;
     DxvkEventTracker    m_eventTracker;
+    DxvkGpuEventTracker m_gpuEventTracker;
     DxvkBufferTracker   m_bufferTracker;
     DxvkStatCounters    m_statCounters;
     
