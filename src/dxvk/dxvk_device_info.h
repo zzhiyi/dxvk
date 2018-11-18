@@ -28,6 +28,7 @@ namespace dxvk {
    */
   struct DxvkDeviceFeatures {
     VkPhysicalDeviceFeatures2KHR                        core;
+    VkPhysicalDeviceConditionalRenderingFeaturesEXT     extConditionalRendering;
     VkPhysicalDeviceTransformFeedbackFeaturesEXT        extTransformFeedback;
     VkPhysicalDeviceVertexAttributeDivisorFeaturesEXT   extVertexAttributeDivisor;
   };
