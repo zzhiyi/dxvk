@@ -261,6 +261,12 @@ namespace dxvk {
       const DxvkImageViewCreateInfo&  createInfo);
     
     /**
+     * \brief Creates a predicate
+     * \returns The predicate object
+     */
+    Rc<DxvkPredicate> createPredicate();
+    
+    /**
      * \brief Creates a sampler object
      * 
      * \param [in] createInfo Sampler parameters
@@ -418,6 +424,7 @@ namespace dxvk {
 
     Rc<DxvkGpuEventPool>        m_gpuEventPool;
     Rc<DxvkGpuQueryPool>        m_gpuQueryPool;
+    Rc<DxvkPredicatePool>       m_predicatePool;
 
     Rc<DxvkMetaClearObjects>    m_metaClearObjects;
     Rc<DxvkMetaCopyObjects>     m_metaCopyObjects;
