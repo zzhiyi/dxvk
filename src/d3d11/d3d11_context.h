@@ -674,6 +674,8 @@ namespace dxvk {
     
     void ApplyViewportState();
     
+    void ApplyPredication();
+    
     void BindShader(
             DxbcProgramType                   ShaderStage,
       const D3D11CommonShader*                pShaderModule);

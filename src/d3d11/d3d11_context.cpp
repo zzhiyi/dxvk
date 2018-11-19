@@ -249,13 +249,10 @@ namespace dxvk {
   void STDMETHODCALLTYPE D3D11DeviceContext::SetPredication(
           ID3D11Predicate*                  pPredicate,
           BOOL                              PredicateValue) {
-    static bool s_errorShown = false;
-    
-    if (pPredicate && !std::exchange(s_errorShown, true))
-      Logger::err("D3D11DeviceContext::SetPredication: Stub");
-    
     m_state.pr.predicateObject = static_cast<D3D11Query*>(pPredicate);
     m_state.pr.predicateValue  = PredicateValue;
+
+    ApplyPredication();
   }
   
   
@@ -2779,6 +2776,23 @@ namespace dxvk {
   }
   
   
+  void D3D11DeviceContext::ApplyPredication() {
+    EmitCs([
+      cPredicate = m_state.pr.predicateObject != nullptr
+        ? m_state.pr.predicateObject->GetPredicate()
+        : nullptr,
+      cPredicateValue = m_state.pr.predicateValue
+    ] (DxvkContext* ctx) {
+      VkConditionalRenderingFlagsEXT flags = 0;
+
+      if (cPredicate != nullptr && !cPredicateValue)
+        flags |= VK_CONDITIONAL_RENDERING_INVERTED_BIT_EXT;
+      
+      ctx->setPredicate(cPredicate, flags);
+    });
+  }
+
+
   void D3D11DeviceContext::BindShader(
           DxbcProgramType       ShaderStage,
     const D3D11CommonShader*    pShaderModule) {
@@ -3184,6 +3198,7 @@ namespace dxvk {
     ApplyStencilRef();
     ApplyRasterizerState();
     ApplyViewportState();
+    ApplyPredication();
 
     BindDrawBuffer(
       m_state.id.argBuffer.ptr());
