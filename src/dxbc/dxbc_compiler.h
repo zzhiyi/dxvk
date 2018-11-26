@@ -177,6 +177,7 @@ namespace dxvk {
     uint32_t builtinSampleMaskOut = 0;
     uint32_t builtinLayer         = 0;
     uint32_t builtinViewportId    = 0;
+    uint32_t builtinSubgroupSize  = 0;
     
     uint32_t killState            = 0;
   };

@@ -3898,16 +3898,24 @@ namespace dxvk {
       m_module.opStore(m_ps.killState, killState);
 
       if (m_moduleInfo.options.useSubgroupOpsForEarlyDiscard) {
-        uint32_t killSubgroup = m_module.opGroupNonUniformLogicalAnd(
-          m_module.defBoolType(),
+        uint32_t ballot = m_module.opGroupNonUniformBallot(
+          getVectorTypeId({ DxbcScalarType::Uint32, 4 }),
           m_module.constu32(spv::ScopeSubgroup),
-          m_moduleInfo.options.useSubgroupOpsClustered
-            ? spv::GroupOperationClusteredReduce
-            : spv::GroupOperationReduce,
-          killState,
-          m_moduleInfo.options.useSubgroupOpsClustered
-            ? m_module.constu32(4)
-            : 0);
+          killState);
+        
+        uint32_t bitCnt = m_module.opGroupNonUniformBallotBitCount(
+          getScalarTypeId(DxbcScalarType::Uint32),
+          m_module.constu32(spv::ScopeSubgroup),
+          spv::GroupOperationReduce,
+          ballot);
+        
+        uint32_t subgroupSize = m_module.opLoad(
+          getScalarTypeId(DxbcScalarType::Uint32),
+          m_ps.builtinSubgroupSize);
+        
+        uint32_t killSubgroup = m_module.opIEqual(
+          m_module.defBoolType(),
+          subgroupSize, bitCnt);
         
         DxbcConditional cond;
         cond.labelIf  = m_module.allocateId();
@@ -6308,10 +6316,14 @@ namespace dxvk {
 
       if (m_moduleInfo.options.useSubgroupOpsForEarlyDiscard) {
         m_module.enableCapability(spv::CapabilityGroupNonUniform);
-        m_module.enableCapability(spv::CapabilityGroupNonUniformArithmetic);
+        m_module.enableCapability(spv::CapabilityGroupNonUniformBallot);
 
-        if (m_moduleInfo.options.useSubgroupOpsClustered)
-          m_module.enableCapability(spv::CapabilityGroupNonUniformClustered);
+        DxbcRegisterInfo subgroupSize;
+        subgroupSize.type = { DxbcScalarType::Uint32, 1, 0 };
+        subgroupSize.sclass = spv::StorageClassInput;
+
+        m_ps.builtinSubgroupSize = emitNewBuiltinVariable(
+          subgroupSize, spv::BuiltInSubgroupSize, "vSubgroupSize");
       }
     }
     
