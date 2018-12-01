@@ -20,8 +20,10 @@
 
 namespace dxvk {
   
-  D3D11DeviceContainer::D3D11DeviceContainer() {
-    
+  D3D11DeviceContainer::D3D11DeviceContainer(IDXGIAdapter* dxgiAdapter, Rc<DxvkDevice> dxvkDevice):
+  m_dxgiAdapter(dxgiAdapter), m_dxvkDevice(dxvkDevice) {
+      for (uint32_t i = 0; i < m_frameEvents.size(); i++)
+        m_frameEvents[i] = new DxvkEvent();
   }
   
   
@@ -29,7 +31,6 @@ namespace dxvk {
     delete m_d3d11VkInterop;
     delete m_d3d11Presenter;
     delete m_d3d11Device;
-    delete m_dxgiDevice;
   }
   
   
@@ -37,17 +38,13 @@ namespace dxvk {
     *ppvObject = nullptr;
     
     if (riid == __uuidof(IUnknown)
-     || riid == __uuidof(IDXGIObject)) {
-      *ppvObject = ref(this);
-      return S_OK;
-    }
-    
-    if (riid == __uuidof(IDXGIDevice)
+     || riid == __uuidof(IDXGIObject)
+     || riid == __uuidof(IDXGIDevice)
      || riid == __uuidof(IDXGIDevice1)
      || riid == __uuidof(IDXGIDevice2)
      || riid == __uuidof(IDXGIDevice3)
      || riid == __uuidof(IDXGIVkDevice)) {
-      *ppvObject = ref(m_dxgiDevice);
+      *ppvObject = ref(this);
       return S_OK;
     }
     
@@ -94,19 +91,135 @@ namespace dxvk {
   HRESULT STDMETHODCALLTYPE D3D11DeviceContainer::GetParent(
           REFIID                  riid,
           void**                  ppParent) {
-    return m_dxgiDevice->GetParent(riid, ppParent);
+    return m_dxgiAdapter->QueryInterface(riid, ppParent);
   }
-  
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceContainer::CreateSurface(
+    const DXGI_SURFACE_DESC*    pDesc,
+          UINT                  NumSurfaces,
+          DXGI_USAGE            Usage,
+    const DXGI_SHARED_RESOURCE* pSharedResource,
+          IDXGISurface**        ppSurface) {
+    InitReturnPtr(ppSurface);
+
+    Logger::err("D3D11DeviceContainer::CreateSurface: Not implemented");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceContainer::GetAdapter(
+          IDXGIAdapter**        pAdapter) {
+    if (pAdapter == nullptr)
+      return DXGI_ERROR_INVALID_CALL;
+
+    *pAdapter = m_dxgiAdapter.ref();
+    return S_OK;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceContainer::GetGPUThreadPriority(
+          INT*                  pPriority) {
+    *pPriority = 0;
+    return S_OK;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceContainer::QueryResourceResidency(
+          IUnknown* const*      ppResources,
+          DXGI_RESIDENCY*       pResidencyStatus,
+          UINT                  NumResources) {
+    static bool s_errorShown = false;
+
+    if (!std::exchange(s_errorShown, true))
+      Logger::err("D3D11DeviceContainer::QueryResourceResidency: Stub");
+
+    if (!ppResources || !pResidencyStatus)
+      return E_INVALIDARG;
+
+    for (uint32_t i = 0; i < NumResources; i++)
+      pResidencyStatus[i] = DXGI_RESIDENCY_FULLY_RESIDENT;
+
+    return S_OK;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceContainer::SetGPUThreadPriority(
+          INT                   Priority) {
+    if (Priority < -7 || Priority > 7)
+      return E_INVALIDARG;
+
+    Logger::err("D3D11DeviceContainer: SetGPUThreadPriority: Ignoring");
+    return S_OK;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceContainer::GetMaximumFrameLatency(
+          UINT*                 pMaxLatency) {
+    *pMaxLatency = m_frameLatency;
+    return S_OK;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceContainer::SetMaximumFrameLatency(
+          UINT                  MaxLatency) {
+    if (MaxLatency == 0)
+      MaxLatency = DefaultFrameLatency;
+
+    if (MaxLatency > m_frameEvents.size())
+      MaxLatency = m_frameEvents.size();
+
+    m_frameLatency = MaxLatency;
+    return S_OK;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceContainer::OfferResources(
+          UINT                          NumResources,
+          IDXGIResource* const*         ppResources,
+          DXGI_OFFER_RESOURCE_PRIORITY  Priority) {
+
+    Logger::err("D3D11DeviceContainer::OfferResources: Not implemented");
+    return DXGI_ERROR_UNSUPPORTED;
+  }
+
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceContainer::ReclaimResources(
+          UINT                          NumResources,
+          IDXGIResource* const*         ppResources,
+          BOOL*                         pDiscarded) {
+    Logger::err("D3D11DeviceContainer::ReclaimResources: Not implemented");
+    return DXGI_ERROR_UNSUPPORTED;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceContainer::EnqueueSetEvent(HANDLE hEvent) {
+    Logger::err("D3D11DeviceContainer::EnqueueSetEvent: Not implemented");
+    return DXGI_ERROR_UNSUPPORTED;
+  }
+
+  void STDMETHODCALLTYPE D3D11DeviceContainer::Trim() {
+    static bool s_errorShown = false;
+
+    if (!std::exchange(s_errorShown, true))
+      Logger::warn("D3D11DeviceContainer::Trim: Stub");
+  }
+
+  Rc<DxvkDevice> STDMETHODCALLTYPE D3D11DeviceContainer::GetDXVKDevice() {
+    return m_dxvkDevice;
+  }
+
+  Rc<DxvkEvent> STDMETHODCALLTYPE D3D11DeviceContainer::GetFrameSyncEvent() {
+    uint32_t frameLatency = m_frameLatency;
+
+    if (m_frameLatencyCap != 0
+     && m_frameLatencyCap <= frameLatency)
+      frameLatency = m_frameLatencyCap;
+
+    uint32_t frameId = m_frameId++ % frameLatency;
+    return m_frameEvents[frameId];
+  }
   
   D3D11Device::D3D11Device(
           IDXGIObject*        pContainer,
-          IDXGIVkDevice*      pDxgiDevice,
+          Rc<DxvkDevice>      pDxvkDevice,
           D3D_FEATURE_LEVEL   FeatureLevel,
           UINT                FeatureFlags)
   : m_container     (pContainer),
     m_featureLevel  (FeatureLevel),
     m_featureFlags  (FeatureFlags),
-    m_dxvkDevice    (pDxgiDevice->GetDXVKDevice()),
+    m_dxvkDevice    (pDxvkDevice),
     m_dxvkAdapter   (m_dxvkDevice->adapter()),
     m_d3d11Formats  (m_dxvkAdapter),
     m_d3d11Options  (m_dxvkAdapter->instance()->config()),

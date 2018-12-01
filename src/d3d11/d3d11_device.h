@@ -44,11 +44,12 @@ namespace dxvk {
    * Stores all the objects that contribute to the D3D11
    * device implementation, including the DXGI device.
    */
-  class D3D11DeviceContainer : public DxgiObject<IDXGIObject> {
-    
+  class D3D11DeviceContainer : public DxgiObject<IDXGIVkDevice> {
+    constexpr static uint32_t DefaultFrameLatency = 3;
+
   public:
     
-    D3D11DeviceContainer();
+    D3D11DeviceContainer(IDXGIAdapter* dxgiAdapter, Rc<DxvkDevice> dxvkDevice);
     ~D3D11DeviceContainer();
     
     HRESULT STDMETHODCALLTYPE QueryInterface(
@@ -58,12 +59,66 @@ namespace dxvk {
     HRESULT STDMETHODCALLTYPE GetParent(
             REFIID                  riid,
             void**                  ppParent);
-    
-    IDXGIVkDevice*      m_dxgiDevice      = nullptr;
+
+    HRESULT STDMETHODCALLTYPE CreateSurface(
+      const DXGI_SURFACE_DESC*    pDesc,
+            UINT                  NumSurfaces,
+            DXGI_USAGE            Usage,
+      const DXGI_SHARED_RESOURCE* pSharedResource,
+            IDXGISurface**        ppSurface) final;
+
+    HRESULT STDMETHODCALLTYPE GetAdapter(
+            IDXGIAdapter**        pAdapter) final;
+
+    HRESULT STDMETHODCALLTYPE GetGPUThreadPriority(
+            INT*                  pPriority) final;
+
+    HRESULT STDMETHODCALLTYPE QueryResourceResidency(
+            IUnknown* const*      ppResources,
+            DXGI_RESIDENCY*       pResidencyStatus,
+            UINT                  NumResources) final;
+
+    HRESULT STDMETHODCALLTYPE SetGPUThreadPriority(
+            INT                   Priority) final;
+
+    HRESULT STDMETHODCALLTYPE GetMaximumFrameLatency(
+            UINT*                 pMaxLatency) final;
+
+    HRESULT STDMETHODCALLTYPE SetMaximumFrameLatency(
+            UINT                  MaxLatency) final;
+
+    HRESULT STDMETHODCALLTYPE OfferResources(
+            UINT                          NumResources,
+            IDXGIResource* const*         ppResources,
+            DXGI_OFFER_RESOURCE_PRIORITY  Priority) final;
+
+    HRESULT STDMETHODCALLTYPE ReclaimResources(
+            UINT                          NumResources,
+            IDXGIResource* const*         ppResources,
+            BOOL*                         pDiscarded) final;
+
+    HRESULT STDMETHODCALLTYPE EnqueueSetEvent(
+            HANDLE                hEvent) final;
+
+    void STDMETHODCALLTYPE Trim() final;
+
+    Rc<DxvkDevice> STDMETHODCALLTYPE GetDXVKDevice() final;
+
+    Rc<DxvkEvent> STDMETHODCALLTYPE GetFrameSyncEvent() final;
+
     D3D11Device*        m_d3d11Device     = nullptr;
     D3D11PresentDevice* m_d3d11Presenter  = nullptr;
     D3D11VkInterop*     m_d3d11VkInterop  = nullptr;
-    
+
+  private:
+    Com<IDXGIAdapter>   m_dxgiAdapter     = nullptr;
+    Rc<DxvkDevice>      m_dxvkDevice      = nullptr;
+
+    uint32_t            m_frameLatencyCap = 0;
+    uint32_t            m_frameLatency    = DefaultFrameLatency;
+    uint32_t            m_frameId         = 0;
+
+    std::array<Rc<DxvkEvent>, 16> m_frameEvents;
   };
   
   
@@ -80,7 +135,7 @@ namespace dxvk {
     
     D3D11Device(
             IDXGIObject*            pContainer,
-            IDXGIVkDevice*          pDxgiDevice,
+            Rc<DxvkDevice>          pDxvkDevice,
             D3D_FEATURE_LEVEL       FeatureLevel,
             UINT                    FeatureFlags);
     ~D3D11Device();

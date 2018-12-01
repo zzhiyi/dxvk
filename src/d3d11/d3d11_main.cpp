@@ -2,6 +2,7 @@
 
 #include "../dxgi/dxgi_adapter.h"
 #include "../dxgi/dxgi_device.h"
+#include "../dxvk/dxvk_instance.h"
 
 #include "d3d11_device.h"
 #include "d3d11_enums.h"
@@ -22,15 +23,6 @@ extern "C" {
     const D3D_FEATURE_LEVEL*  pFeatureLevels,
           UINT                FeatureLevels,
           ID3D11Device**      ppDevice) {
-    Com<IDXGIVkAdapter> dxvkAdapter = nullptr;
-    
-    // The adapter must obviously be a DXVK-compatible adapter so
-    // that we can create a DXVK-compatible DXGI device from it.
-    if (FAILED(pAdapter->QueryInterface(__uuidof(IDXGIVkAdapter),
-        reinterpret_cast<void**>(&dxvkAdapter)))) {
-      Logger::err("D3D11CoreCreateDevice: Adapter is not a DXVK adapter");
-      return E_INVALIDARG;
-    }
     
     // Feature levels to probe if the
     // application does not specify any.
@@ -44,16 +36,18 @@ extern "C" {
       pFeatureLevels = defaultFeatureLevels.data();
       FeatureLevels  = defaultFeatureLevels.size();
     }
-    
+
+    // FIXME: Find the corresponding dxvk adapter
+    const Rc<DxvkInstance> dxvkInstance = new DxvkInstance();
+    const Rc<DxvkAdapter> dxvkAdapter = dxvkInstance->enumAdapters(0);
+
     // Find the highest feature level supported by the device.
     // This works because the feature level array is ordered.
-    const Rc<DxvkAdapter> adapter = dxvkAdapter->GetDXVKAdapter();
-    
     UINT flId;
     for (flId = 0 ; flId < FeatureLevels; flId++) {
       Logger::info(str::format("D3D11CoreCreateDevice: Probing ", pFeatureLevels[flId]));
       
-      if (D3D11Device::CheckFeatureLevelSupport(adapter, pFeatureLevels[flId]))
+      if (D3D11Device::CheckFeatureLevelSupport(dxvkAdapter, pFeatureLevels[flId]))
         break;
     }
     
@@ -67,18 +61,13 @@ extern "C" {
     
     try {
       Logger::info(str::format("D3D11CoreCreateDevice: Using feature level ", fl));
-      Com<D3D11DeviceContainer> container = new D3D11DeviceContainer();
-      
-      const DxvkDeviceFeatures deviceFeatures
-        = D3D11Device::GetDeviceFeatures(adapter, fl);
-      
-      if (FAILED(dxvkAdapter->CreateDevice(container.ptr(), &deviceFeatures, &container->m_dxgiDevice))) {
-        Logger::err("D3D11CoreCreateDevice: Failed to create DXGI device");
-        return E_FAIL;
-      }
+
+      const DxvkDeviceFeatures deviceFeatures = D3D11Device::GetDeviceFeatures(dxvkAdapter, fl);
+      const Rc<DxvkDevice> dxvkDevice = dxvkAdapter->createDevice(deviceFeatures);
+      Com<D3D11DeviceContainer> container = new D3D11DeviceContainer(pAdapter, dxvkDevice);
       
       container->m_d3d11Device = new D3D11Device(
-        container.ptr(), container->m_dxgiDevice, fl, Flags);
+        container.ptr(), dxvkDevice, fl, Flags);
       container->m_d3d11Presenter = new D3D11PresentDevice(
         container.ptr(), container->m_d3d11Device);
       container->m_d3d11VkInterop = new D3D11VkInterop(
