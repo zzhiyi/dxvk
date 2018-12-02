@@ -13,6 +13,7 @@ namespace dxvk {
    * so before using them, check whether they are supported.
    */
   struct DxvkDeviceInfo {
+    VkPhysicalDeviceIDPropertiesKHR                     id;
     VkPhysicalDeviceProperties2KHR                      core;
     VkPhysicalDeviceSubgroupProperties                  coreSubgroup;
     VkPhysicalDeviceTransformFeedbackPropertiesEXT      extTransformFeedback;

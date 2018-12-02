@@ -37,9 +37,32 @@ extern "C" {
       FeatureLevels  = defaultFeatureLevels.size();
     }
 
-    // FIXME: Find the corresponding dxvk adapter
+    // FIXME: This is not working properly because LUID is not implemented both
+    // on dxvk and on wine.
+    // Find the corresponding dxvk adapter
     const Rc<DxvkInstance> dxvkInstance = new DxvkInstance();
-    const Rc<DxvkAdapter> dxvkAdapter = dxvkInstance->enumAdapters(0);
+    Rc<DxvkAdapter> dxvkAdapter = dxvkInstance->enumAdapters(0);
+    DXGI_ADAPTER_DESC dxgiAdapterDesc;
+
+    if (SUCCEEDED(pAdapter->GetDesc(&dxgiAdapterDesc)))
+    {
+        Rc<DxvkAdapter> adapter;
+        DxvkDeviceInfo info;
+
+        for (int i = 1;; i++)
+        {
+            adapter = dxvkInstance->enumAdapters(i);
+            if (adapter == nullptr) break;
+
+            info = adapter->devicePropertiesExt();
+            if (info.id.deviceLUIDValid == VK_TRUE
+                && !memcmp(info.id.deviceLUID, &dxgiAdapterDesc.AdapterLuid, sizeof(LUID)))
+            {
+                dxvkAdapter = adapter;
+                break;
+            }
+        }
+    }
 
     // Find the highest feature level supported by the device.
     // This works because the feature level array is ordered.
