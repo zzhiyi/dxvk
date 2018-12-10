@@ -1679,7 +1679,8 @@ namespace dxvk {
     m_dxvkDevice    (CreateDevice(FeatureLevel)),
     m_d3d11Device   (this, FeatureLevel, FeatureFlags),
     m_d3d11Presenter(this, &m_d3d11Device),
-    m_d3d11Interop  (this, &m_d3d11Device) {
+    m_d3d11Interop  (this, &m_d3d11Device),
+    m_d3d11Factory  (this) {
     for (uint32_t i = 0; i < m_frameEvents.size(); i++)
       m_frameEvents[i] = new DxvkEvent();
   }
@@ -1723,6 +1724,11 @@ namespace dxvk {
     if (riid == __uuidof(IDXGIVkPresentDevice)) {
       *ppvObject = ref(&m_d3d11Presenter);
       return S_OK;
+    }
+
+    if (riid == __uuidof(IWineDXGISwapChainFactory)) {
+        *ppvObject = ref(&m_d3d11Factory);
+        return S_OK;
     }
 
     if (riid == __uuidof(ID3D10Multithread)) {

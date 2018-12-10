@@ -14,6 +14,7 @@
 #include "../util/com/com_private_data.h"
 
 #include "d3d11_counter_buffer.h"
+#include "d3d11_deviceswapchainfactory.h"
 #include "d3d11_initializer.h"
 #include "d3d11_interfaces.h"
 #include "d3d11_interop.h"
@@ -473,6 +474,7 @@ namespace dxvk {
     D3D11Device         m_d3d11Device;
     D3D11PresentDevice  m_d3d11Presenter;
     D3D11VkInterop      m_d3d11Interop;
+    D3D11DeviceSwapChainFactory m_d3d11Factory;
     
     uint32_t m_frameLatencyCap = 0;
     uint32_t m_frameLatency    = DefaultFrameLatency;
