@@ -210,7 +210,8 @@ namespace dxvk {
             DXGI_VK_MONITOR_DATA**  ppData);
     
     void ReleaseMonitorData();
-    
+
+    BOOL IsWindowOccluded(HWND hWnd);
   };
   
 }

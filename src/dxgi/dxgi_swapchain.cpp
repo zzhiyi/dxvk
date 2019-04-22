@@ -253,6 +253,12 @@ namespace dxvk {
     if (!IsWindow(m_window))
       return DXGI_ERROR_INVALID_CALL;
     
+    if (!m_descFs.Windowed && IsWindowOccluded(m_window))
+    {
+        SetFullscreenState(FALSE, NULL);
+        return DXGI_STATUS_OCCLUDED;
+    }
+
     if (PresentFlags & DXGI_PRESENT_TEST)
       return S_OK;
     
@@ -706,4 +712,26 @@ namespace dxvk {
       m_monitorInfo->ReleaseMonitorData();
   }
   
+  BOOL DxgiSwapChain::IsWindowOccluded(HWND hWnd) {
+      RECT fullscreenRect;
+      RECT intersectRect;
+      RECT windowRect;
+      HWND previousHwnd;
+
+      if (GetForegroundWindow() != hWnd)
+          return TRUE;
+
+      /* Check if windows with higher z-order intersect with the full-screen window */
+      GetWindowRect(hWnd, &fullscreenRect);
+      previousHwnd = GetWindow(hWnd, GW_HWNDPREV);
+      while (previousHwnd) {
+          GetWindowRect(previousHwnd, &windowRect);
+          if (IntersectRect(&intersectRect, &windowRect, &fullscreenRect))
+              return TRUE;
+
+          previousHwnd = GetWindow(previousHwnd, GW_HWNDPREV);
+      }
+
+      return FALSE;
+  }
 }
