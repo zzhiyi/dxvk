@@ -3,7 +3,55 @@
 #include "dxgi_swapchain.h"
 
 namespace dxvk {
-  
+
+  static std::map<DxgiSwapChain*, DWORD> g_hookedSwapchainMap;
+  static std::map<DWORD, HHOOK> g_hookMap;
+  static std::mutex g_hookMutex;
+
+  static LRESULT CALLBACK AssociatedWindowHookProc(int code, WPARAM wParam, LPARAM lParam)
+  {
+      IDXGIFactory *pDxgiFactory;
+      HANDLE pFactory;
+      MSG *msg = (MSG *)lParam;
+      BOOL skip = FALSE;
+      BOOL fullscreen;
+      DWORD flags;
+      HWND hWnd;
+
+      if (code == HC_ACTION && msg->message == WM_SYSKEYDOWN && msg->wParam == VK_RETURN && (msg->lParam & (KF_ALTDOWN << 16)))
+      {
+          std::lock_guard<std::mutex> lock(g_hookMutex);
+
+          for (auto& kv : g_hookedSwapchainMap)
+          {
+              DxgiSwapChain* swapchain = kv.first;
+
+              if (FAILED(swapchain->GetHwnd(&hWnd)) || hWnd != msg->hwnd)
+                  continue;
+
+              if (FAILED(swapchain->GetParent(__uuidof(IDXGIFactory), (void **)&pDxgiFactory)))
+                  continue;
+              pDxgiFactory->Release();
+
+              pFactory = GetPropA(hWnd, "WineDXGIAssociatedFactory");
+              flags = (DWORD)(UINT_PTR)GetPropA(hWnd, "WineDXGIAssociatedFlags");
+
+              if (pFactory && pFactory != pDxgiFactory)
+                  continue;
+
+              if (flags & (DXGI_MWA_NO_WINDOW_CHANGES | DXGI_MWA_NO_ALT_ENTER))
+                  break;
+
+              swapchain->GetFullscreenState(&fullscreen, NULL);
+              swapchain->SetFullscreenState(!fullscreen, NULL);
+              skip = TRUE;
+              break;
+          }
+      }
+
+      return skip ? 1 : CallNextHookEx(0, code, wParam, lParam);
+  }
+
   DxgiSwapChain::DxgiSwapChain(
           IDXGIFactory*               pFactory,
           IDXGIVkSwapChain*           pPresenter,
@@ -32,6 +80,20 @@ namespace dxvk {
     // Apply initial window mode and fullscreen state
     if (!m_descFs.Windowed && FAILED(EnterFullscreenMode(nullptr)))
       throw DxvkError("DXGI: Failed to set initial fullscreen state");
+
+    // Add hook
+    if (!IsWindow(hWnd))
+        return;
+
+    DWORD threadId = GetWindowThreadProcessId(hWnd, NULL);
+
+    std::lock_guard<std::mutex> lock(g_hookMutex);
+    g_hookedSwapchainMap.insert(std::pair<DxgiSwapChain*, DWORD>(this, threadId));
+    if (g_hookMap.find(threadId) == g_hookMap.end())
+    {
+        HHOOK hHook = SetWindowsHookExW(WH_GETMESSAGE, AssociatedWindowHookProc, 0, threadId);
+        g_hookMap.insert(std::pair<DWORD, HHOOK>(threadId, hHook));
+    }
   }
   
   
@@ -46,6 +108,33 @@ namespace dxvk {
         monitorInfo->pSwapChain = nullptr;
       
       ReleaseMonitorData();
+    }
+
+    // Remove hook
+    BOOL hookInUse = FALSE;
+    DWORD threadId;
+
+    std::lock_guard<std::mutex> lock(g_hookMutex);
+    auto found = g_hookedSwapchainMap.find(this);
+    if (found == g_hookedSwapchainMap.end())
+        return;
+
+    threadId = found->second;
+    g_hookedSwapchainMap.erase(this);
+    for (auto& kv : g_hookedSwapchainMap)
+    {
+        if (kv.second == threadId)
+        {
+            hookInUse = TRUE;
+            break;
+        }
+    }
+
+    if (!hookInUse)
+    {
+        auto found = g_hookMap.find(threadId);
+        UnhookWindowsHookEx(found->second);
+        g_hookMap.erase(threadId);
     }
   }
   
