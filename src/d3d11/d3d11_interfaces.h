@@ -233,7 +233,7 @@ ID3D11DeviceUnknown : public IUnknown {
   virtual HRESULT STDMETHODCALLTYPE Unknown2() = 0;
   virtual HRESULT STDMETHODCALLTYPE Unknown3() = 0;
   virtual HRESULT STDMETHODCALLTYPE Unknown4() = 0;
-  virtual HRESULT STDMETHODCALLTYPE Unknown5() = 0;
+  virtual HRESULT STDMETHODCALLTYPE Unknown5(ID3D11Texture2D *texture) = 0;
   virtual HRESULT STDMETHODCALLTYPE Unknown6(ID3D11Texture2D *texture) = 0;
   virtual HRESULT STDMETHODCALLTYPE Unknown7() = 0;
   virtual HRESULT STDMETHODCALLTYPE Unknown8() = 0;
