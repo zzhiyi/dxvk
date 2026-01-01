@@ -459,8 +459,10 @@ namespace dxvk {
   HRESULT STDMETHODCALLTYPE DxgiFactory::RegisterOcclusionStatusEvent(
           HANDLE                hEvent,
           DWORD*                pdwCookie) {
-    Logger::err("DxgiFactory::RegisterOcclusionStatusEvent: Not implemented");
-    return E_NOTIMPL;
+    Logger::warn("DxgiFactory::RegisterOcclusionStatusEvent: stub!");
+
+    *pdwCookie = 0xdeadbeef;
+    return S_OK;
   }
   
 
