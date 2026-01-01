@@ -3764,8 +3764,522 @@ namespace dxvk {
     return m_apiVersion;
   }
 
-  
+  /* Undocumented D3D11 device interface */
+  D3D11DeviceUnknown::D3D11DeviceUnknown(D3D11DXGIDevice* pContainer)
+  : m_container(pContainer) {
 
+  }
+
+  ULONG STDMETHODCALLTYPE D3D11DeviceUnknown::AddRef() {
+    return m_container->AddRef();
+  }
+
+
+  ULONG STDMETHODCALLTYPE D3D11DeviceUnknown::Release() {
+    return m_container->Release();
+  }
+
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::QueryInterface(
+          REFIID                  riid,
+          void**                  ppvObject) {
+    return m_container->QueryInterface(riid, ppvObject);
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown1() {
+    Logger::warn("D3D11DeviceUnknown::Unknown1: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown2() {
+    Logger::warn("D3D11DeviceUnknown::Unknown2: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown3() {
+    Logger::warn("D3D11DeviceUnknown::Unknown3: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown4() {
+    Logger::warn("D3D11DeviceUnknown::Unknown4: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown5() {
+    Logger::warn("D3D11DeviceUnknown::Unknown5: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown6() {
+    Logger::warn("D3D11DeviceUnknown::Unknown6: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown7() {
+    Logger::warn("D3D11DeviceUnknown::Unknown7: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown8() {
+    Logger::warn("D3D11DeviceUnknown::Unknown8: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown9() {
+    Logger::warn("D3D11DeviceUnknown::Unknown9: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown10() {
+    Logger::warn("D3D11DeviceUnknown::Unknown10: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown11() {
+    Logger::warn("D3D11DeviceUnknown::Unknown11: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown12() {
+    Logger::warn("D3D11DeviceUnknown::Unknown12: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown13() {
+    Logger::warn("D3D11DeviceUnknown::Unknown13: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown14() {
+    Logger::warn("D3D11DeviceUnknown::Unknown14: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown15() {
+    Logger::warn("D3D11DeviceUnknown::Unknown15: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown16() {
+    Logger::warn("D3D11DeviceUnknown::Unknown16: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown17() {
+    Logger::warn("D3D11DeviceUnknown::Unknown17: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown18() {
+    Logger::warn("D3D11DeviceUnknown::Unknown18: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown19() {
+    Logger::warn("D3D11DeviceUnknown::Unknown19: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown20() {
+    Logger::warn("D3D11DeviceUnknown::Unknown20: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown21() {
+    Logger::warn("D3D11DeviceUnknown::Unknown21: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown22() {
+    Logger::warn("D3D11DeviceUnknown::Unknown22: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown23() {
+    Logger::warn("D3D11DeviceUnknown::Unknown23: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown24() {
+    Logger::warn("D3D11DeviceUnknown::Unknown24: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown25() {
+    Logger::warn("D3D11DeviceUnknown::Unknown25: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown26() {
+    Logger::warn("D3D11DeviceUnknown::Unknown26: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown27() {
+    Logger::warn("D3D11DeviceUnknown::Unknown27: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown28() {
+    Logger::warn("D3D11DeviceUnknown::Unknown28: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown29() {
+    Logger::warn("D3D11DeviceUnknown::Unknown29: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown30() {
+    Logger::warn("D3D11DeviceUnknown::Unknown30: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown31() {
+    Logger::warn("D3D11DeviceUnknown::Unknown31: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown32() {
+    Logger::warn("D3D11DeviceUnknown::Unknown32: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown33() {
+    Logger::warn("D3D11DeviceUnknown::Unknown33: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown34() {
+    Logger::warn("D3D11DeviceUnknown::Unknown34: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown35() {
+    Logger::warn("D3D11DeviceUnknown::Unknown35: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown36() {
+    Logger::warn("D3D11DeviceUnknown::Unknown36: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown37() {
+    Logger::warn("D3D11DeviceUnknown::Unknown37: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown38() {
+    Logger::warn("D3D11DeviceUnknown::Unknown38: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown39() {
+    Logger::warn("D3D11DeviceUnknown::Unknown39: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown40() {
+    Logger::warn("D3D11DeviceUnknown::Unknown40: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown41() {
+    Logger::warn("D3D11DeviceUnknown::Unknown41: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown42() {
+    Logger::warn("D3D11DeviceUnknown::Unknown42: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown43() {
+    Logger::warn("D3D11DeviceUnknown::Unknown43: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown44() {
+    Logger::warn("D3D11DeviceUnknown::Unknown44: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown45() {
+    Logger::warn("D3D11DeviceUnknown::Unknown45: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown46() {
+    Logger::warn("D3D11DeviceUnknown::Unknown46: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown47() {
+    Logger::warn("D3D11DeviceUnknown::Unknown47: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown48() {
+    Logger::warn("D3D11DeviceUnknown::Unknown48: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown49() {
+    Logger::warn("D3D11DeviceUnknown::Unknown49: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown50() {
+    Logger::warn("D3D11DeviceUnknown::Unknown50: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown51() {
+    Logger::warn("D3D11DeviceUnknown::Unknown51: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown52() {
+    Logger::warn("D3D11DeviceUnknown::Unknown52: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown53() {
+    Logger::warn("D3D11DeviceUnknown::Unknown53: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown54() {
+    Logger::warn("D3D11DeviceUnknown::Unknown54: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown55() {
+    Logger::warn("D3D11DeviceUnknown::Unknown55: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown56() {
+    Logger::warn("D3D11DeviceUnknown::Unknown56: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown57() {
+    Logger::warn("D3D11DeviceUnknown::Unknown57: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown58() {
+    Logger::warn("D3D11DeviceUnknown::Unknown58: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown59() {
+    Logger::warn("D3D11DeviceUnknown::Unknown59: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown60() {
+    Logger::warn("D3D11DeviceUnknown::Unknown60: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown61() {
+    Logger::warn("D3D11DeviceUnknown::Unknown61: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown62() {
+    Logger::warn("D3D11DeviceUnknown::Unknown62: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown63() {
+    Logger::warn("D3D11DeviceUnknown::Unknown63: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown64() {
+    Logger::warn("D3D11DeviceUnknown::Unknown64: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown65() {
+    Logger::warn("D3D11DeviceUnknown::Unknown65: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown66() {
+    Logger::warn("D3D11DeviceUnknown::Unknown66: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown67() {
+    Logger::warn("D3D11DeviceUnknown::Unknown67: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown68() {
+    Logger::warn("D3D11DeviceUnknown::Unknown68: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown69() {
+    Logger::warn("D3D11DeviceUnknown::Unknown69: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown70() {
+    Logger::warn("D3D11DeviceUnknown::Unknown70: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown71() {
+    Logger::warn("D3D11DeviceUnknown::Unknown71: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown72() {
+    Logger::warn("D3D11DeviceUnknown::Unknown72: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown73() {
+    Logger::warn("D3D11DeviceUnknown::Unknown73: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown74() {
+    Logger::warn("D3D11DeviceUnknown::Unknown74: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown75() {
+    Logger::warn("D3D11DeviceUnknown::Unknown75: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown76() {
+    Logger::warn("D3D11DeviceUnknown::Unknown76: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown77() {
+    Logger::warn("D3D11DeviceUnknown::Unknown77: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown78() {
+    Logger::warn("D3D11DeviceUnknown::Unknown78: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown79() {
+    Logger::warn("D3D11DeviceUnknown::Unknown79: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown80() {
+    Logger::warn("D3D11DeviceUnknown::Unknown80: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown81() {
+    Logger::warn("D3D11DeviceUnknown::Unknown81: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown82() {
+    Logger::warn("D3D11DeviceUnknown::Unknown82: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown83() {
+    Logger::warn("D3D11DeviceUnknown::Unknown83: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown84() {
+    Logger::warn("D3D11DeviceUnknown::Unknown84: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown85() {
+    Logger::warn("D3D11DeviceUnknown::Unknown85: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown86() {
+    Logger::warn("D3D11DeviceUnknown::Unknown86: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown87() {
+    Logger::warn("D3D11DeviceUnknown::Unknown87: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown88() {
+    Logger::warn("D3D11DeviceUnknown::Unknown88: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown89() {
+    Logger::warn("D3D11DeviceUnknown::Unknown89: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown90() {
+    Logger::warn("D3D11DeviceUnknown::Unknown90: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown91() {
+    Logger::warn("D3D11DeviceUnknown::Unknown91: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown92() {
+    Logger::warn("D3D11DeviceUnknown::Unknown92: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown93() {
+    Logger::warn("D3D11DeviceUnknown::Unknown93: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown94() {
+    Logger::warn("D3D11DeviceUnknown::Unknown94: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown95() {
+    Logger::warn("D3D11DeviceUnknown::Unknown95: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown96() {
+    Logger::warn("D3D11DeviceUnknown::Unknown96: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown97() {
+    Logger::warn("D3D11DeviceUnknown::Unknown97: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown98() {
+    Logger::warn("D3D11DeviceUnknown::Unknown98: Stub");
+    return E_NOTIMPL;
+  }
+
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown99() {
+    Logger::warn("D3D11DeviceUnknown::Unknown99: Stub");
+    return E_NOTIMPL;
+  }
 
   D3D11DXGIDevice::D3D11DXGIDevice(
           IDXGIAdapter*       pAdapter,
@@ -3787,6 +4301,7 @@ namespace dxvk {
     m_d3d11Reflex   (this, &m_d3d11Device),
     m_d3d11on12     (this, &m_d3d11Device, pD3D12Device, pD3D12Queue),
     m_metaDevice    (this),
+    m_d3d11DeviceUnknown(this),
     m_dxvkFactory   (this, &m_d3d11Device),
     m_destructionNotifier(this) {
 
@@ -3845,6 +4360,12 @@ namespace dxvk {
     
     if (riid == __uuidof(IDXGIDXVKDevice)) {
       *ppvObject = ref(&m_metaDevice);
+      return S_OK;
+    }
+
+    if (riid == __uuidof(ID3D11DeviceUnknown)) {
+      *ppvObject = ref(&m_d3d11DeviceUnknown);
+      Logger::warn(str::format("D3D11DXGIDevice::QueryInterface querying undocumented interface ID3D11DeviceUnknown ", riid, " ", *ppvObject));
       return S_OK;
     }
 
