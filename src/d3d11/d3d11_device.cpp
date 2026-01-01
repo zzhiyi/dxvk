@@ -3811,9 +3811,9 @@ namespace dxvk {
     return E_NOTIMPL;
   }
 
-  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown6() {
+  HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown6(ID3D11Texture2D *texture) {
     Logger::warn("D3D11DeviceUnknown::Unknown6: Stub");
-    return E_NOTIMPL;
+    return S_OK;
   }
 
   HRESULT STDMETHODCALLTYPE D3D11DeviceUnknown::Unknown7() {
